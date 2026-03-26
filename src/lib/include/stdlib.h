@@ -1,10 +1,10 @@
 #pragma once
 
-void* malloc(size_t size);
+void* malloc(int size);
 void free(void* ptr);
 
-void *calloc(size_t size);
-void *realloc(size_t size);
+void *calloc(int size);
+void *realloc(int size);
 
 void exit(int status);
 void kill(int pid);

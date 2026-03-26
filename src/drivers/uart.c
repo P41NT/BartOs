@@ -1,5 +1,4 @@
-#include "lib.h"
-#include "../lib/stm32f401xe.h"
+#include "../../lib/stm32f401xe.h"
 
 #define UART_TX_GPIO 2
 #define UART_RX_GPIO 3
@@ -57,7 +56,7 @@ void uart_write_string(const char* s) {
     }
 }
 
-void uart_write_buf(const char* s, size_t len) {
+void uart_write_buf(const char* s, int len) {
     char *c = s;
     while (len--) {
         uart_write_char(*c);
