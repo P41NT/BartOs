@@ -1,8 +1,8 @@
 #include "include/string.h"
 
-size_t strlen(const char *s) {
-    size_t count = 0;
-    char* temp = s;
+int strlen(const char *s) {
+    int count = 0;
+    const char* temp = s;
     while (*temp != '\0') {
         temp++;
         count++;
@@ -10,80 +10,84 @@ size_t strlen(const char *s) {
     return count;
 }
 
-bool strcmp(const char* s1, const char* s2) {
-    char* c1 = s1;
-    char* c2 = s2;
+int strcmp(const char* s1, const char* s2) {
+    const char* c1 = s1;
+    const char* c2 = s2;
 
     while (*c1 != '\0' || *c2 != '\0') {
-        if (*c1 != *c2) return false;
+        if (*c1 != *c2) return 1;
         c1++;
         c2++;
     }
-    return true;
+    return 0;
 }
 
 char* strcpy(char* dst, const char* src) {
-    char* s = src;
+    const char* s = src;
     char* d = dst;
     while (*s != '\0') {
         *d = *s;
         d++;
         s++;
     }
+    return dst;
 }
 
-char* strncpy(char* dst, const char* src, size_t n) {
-    char *s = src;
+char* strncpy(char* dst, const char* src, int n) {
+    const char *s = src;
     char *d = dst;
     while (n--) {
         *d = *s;
         d++;
         s++;
     }
+    return dst;
 }
 
-void* memcpy(void* dst, const void* src, size_t n) {
-    char *s = (char*)src;
+void* memcpy(void* dst, const void* src, int n) {
+    const char *s = (char*)src;
     char *d = (char*)dst;
     while (n--) {
         *d = *s;
         d++;
         s++;
     }
+    return dst;
 }
 
-void* memset(void* dst, int c, size_t n) {
+void* memset(void* dst, int c, int n) {
     char *d = (char*)dst;
-    char f = (char*)c;
+    char f = (char)c;
     while (n--) {
         *d = f;
         d++;
     }
+    return dst;
 }
 
-bool memcmp(const void* src1, const void* src2, size_t n) {
-    char* c1 = s1;
-    char* c2 = s2;
+int memcmp(const void* src1, const void* src2, int n) {
+    const char* c1 = src1;
+    const char* c2 = src2;
 
     while (n--) {
-        if (*c1 != *c2) return false;
+        if (*c1 != *c2) return 1;
         c1++;
         c2++;
     }
-    return true;
+    return 0;
 }
 
-bool isdigit(char c) {
+int isdigit(char c) {
     return (c >= '0' && c <= '9');
 }
 
-bool isalpha(char c) {
+int isalpha(char c) {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
 
 int atoi(const char* s) {
     int result = 0;
-    char *c = s;
+    const char *c = s;
     while (*c != '\0') {
         c++;
     }
