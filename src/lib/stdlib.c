@@ -15,11 +15,11 @@ uint8_t heap[HEAP_SIZE];
 typedef struct alloc_header {
     struct alloc_header* next;
     uint8_t order;
-} alloc_header;
+} alloc_header_t;
 
-alloc_header* free_list[MAX_ORDER + 1];
+alloc_header_t* free_list[MAX_ORDER + 1];
 
-#define HEADER_SIZE sizeof(alloc_header)
+#define HEADER_SIZE sizeof(alloc_header_t)
 
 void init_allocator() {
     free_list[MAX_ORDER] = (void*)heap;
@@ -31,12 +31,12 @@ void init_allocator() {
     }
 }
 
-alloc_header* find_buddy(alloc_header* curr){
+alloc_header_t* find_buddy(alloc_header_t* curr){
     size_t offset = (uint8_t*)curr - heap;
     size_t buddy_offset = offset ^ (1 << (curr->order));
-    alloc_header* buddy = (alloc_header*)(buddy_offset + heap);
+    alloc_header_t* buddy = (alloc_header_t*)(buddy_offset + heap);
 
-    alloc_header* temp = free_list[curr->order];
+    alloc_header_t* temp = free_list[curr->order];
     if (temp == NULL) return NULL;
 
     if (temp == buddy) {
@@ -58,11 +58,11 @@ void split(int order) {
     if (free_list[order] == NULL) return;
     if (order <= MIN_ORDER || order > MAX_ORDER) return;
 
-    alloc_header* curr = free_list[order];
+    alloc_header_t* curr = free_list[order];
     free_list[order] = curr->next;
 
     int block_size_half = BLOCK_SIZE(order - 1);
-    alloc_header* buddy = (alloc_header*)((uint8_t*)curr + block_size_half);
+    alloc_header_t* buddy = (alloc_header_t*)((uint8_t*)curr + block_size_half);
 
     curr->order = order - 1;
     buddy->order = order - 1;
@@ -74,16 +74,16 @@ void split(int order) {
     free_list[order - 1] = curr;
 }
 
-alloc_header* join(alloc_header* curr) {
+alloc_header_t* join(alloc_header_t* curr) {
     int order = curr->order;
     if (order < MIN_ORDER || order > MAX_ORDER) return NULL;
 
-    alloc_header* buddy = find_buddy(curr);
+    alloc_header_t* buddy = find_buddy(curr);
     if (!buddy) return NULL;
 
     size_t offset = (uint8_t*)curr - heap;
     if (offset & (1 << (curr->order))) {
-        alloc_header* temp = curr;
+        alloc_header_t* temp = curr;
         curr = buddy;
         buddy = temp;
     }
@@ -105,7 +105,7 @@ void* malloc(int size) {
         tempOrder--;
     }
 
-    alloc_header* curr = free_list[order];
+    alloc_header_t* curr = free_list[order];
     free_list[order] = curr->next;
     curr->order = order;
 
@@ -115,8 +115,8 @@ void* malloc(int size) {
 }
 
 void free(void* allocated) {
-    alloc_header* curr = (alloc_header*)((uint8_t*)allocated - HEADER_SIZE);
-    alloc_header* next = NULL;
+    alloc_header_t* curr = (alloc_header_t*)((uint8_t*)allocated - HEADER_SIZE);
+    alloc_header_t* next = NULL;
 
     while ((next = join(curr))) {
         curr = next;
@@ -124,7 +124,3 @@ void free(void* allocated) {
     curr->next = free_list[curr->order];
     free_list[curr->order] = curr;
 }
-
-// TODO: Implement kill(pid)
-// TODO: Implement getpid()
-// TODO: Implement exit()

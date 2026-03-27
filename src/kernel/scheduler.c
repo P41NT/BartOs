@@ -1,10 +1,5 @@
 #include "scheduler.h"
 
-tcb_t tcbs[NUM_THREADS];
-static tcb_t* current_tcb;
-static int current_task_index = IDLE_THREAD;
-uint32_t idle_stack[IDLE_STACK_SIZE];
-
 __attribute__((naked)) void save_context(void) {
     __asm volatile (
         "MRS R0, PSP\n"
@@ -27,31 +22,22 @@ __attribute__((naked)) void restore_context(void) {
 }
 
 void schedule_thread() {
+    if (current_tcb->state == THREAD_RUNNING)
+        current_tcb->state = THREAD_WAITING;
+
     for (int offset = 1; offset < NUM_THREADS; offset++) {
         current_task_index = (current_task_index + 1) % NUM_THREADS;
         current_tcb = &tcbs[current_task_index];
-        if (current_tcb->state == READY) {
-            break;
+
+        if (current_tcb->state == THREAD_READY) {
+            current_tcb->state = THREAD_RUNNING;
+            return;
         }
     }
+
     current_task_index = IDLE_THREAD;
     current_tcb = &tcbs[current_task_index];
-}
-
-void idle_task() {
-    while (1) {
-        __WFI();
-    }
-}
-
-void scheduler_init() {
-    tcbs[IDLE_THREAD].psp = &idle_stack[IDLE_STACK_SIZE - 16];
-    tcbs[IDLE_THREAD].state = READY;
-
-    current_tcb = &tcbs[IDLE_THREAD];
-    current_task_index = IDLE_THREAD;
-
-    __set_PSP((uint32_t)(current_tcb->psp));
+    current_tcb->state = THREAD_RUNNING;
 }
 
 __attribute__((naked)) void PendSV_Handler(void) {
