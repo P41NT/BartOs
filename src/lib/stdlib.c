@@ -2,7 +2,6 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <assert.h>
 
 #define MIN_ORDER 5
 #define MAX_ORDER 14
@@ -56,8 +55,8 @@ alloc_header* find_buddy(alloc_header* curr){
 }
 
 void split(int order) {
-    assert(free_list[order] != NULL);
-    assert(order > MIN_ORDER && order < MAX_ORDER);
+    if (free_list[order] == NULL) return;
+    if (order <= MIN_ORDER || order > MAX_ORDER) return;
 
     alloc_header* curr = free_list[order];
     free_list[order] = curr->next;
@@ -125,7 +124,6 @@ void free(void* allocated) {
     curr->next = free_list[curr->order];
     free_list[curr->order] = curr;
 }
-
 
 // TODO: Implement kill(pid)
 // TODO: Implement getpid()
