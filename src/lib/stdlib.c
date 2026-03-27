@@ -125,3 +125,8 @@ void free(void* allocated) {
     curr->next = free_list[curr->order];
     free_list[curr->order] = curr;
 }
+
+
+// TODO: Implement kill(pid)
+// TODO: Implement getpid()
+// TODO: Implement exit()

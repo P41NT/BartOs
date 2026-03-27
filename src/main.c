@@ -1,5 +1,4 @@
-#include "../lib/stm32f401xe.h"
-#include "uart.h"
+#include "drivers/uart.h"
 
 int main() {
     uart_init(115200);

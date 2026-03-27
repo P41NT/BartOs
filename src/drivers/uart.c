@@ -49,7 +49,7 @@ void uart_write_char(char c) {
 }
 
 void uart_write_string(const char* s) {
-    char *c = s;
+    const char *c = s;
     while (*c != '\0') {
         uart_write_char(*c);
         c++;
@@ -57,7 +57,7 @@ void uart_write_string(const char* s) {
 }
 
 void uart_write_buf(const char* s, int len) {
-    char *c = s;
+    const char *c = s;
     while (len--) {
         uart_write_char(*c);
         c++;
