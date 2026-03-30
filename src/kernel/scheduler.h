@@ -18,8 +18,9 @@ typedef struct tcb {
     uint32_t tid;
 } tcb_t;
 
-extern int NUM_THREADS;
-extern tcb_t *tcbs;
-static tcb_t* current_tcb;
-static int current_task_index = IDLE_THREAD;
-static int current_tid;
+extern volatile int NUM_THREADS;
+extern volatile tcb_t *tcbs;
+extern volatile tcb_t* current_tcb;
+extern volatile int current_task_index;
+extern volatile int current_tid;
+extern volatile int scheduler_started;

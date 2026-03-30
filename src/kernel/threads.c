@@ -6,14 +6,14 @@
 
 #include <stdint.h>
 
-uint32_t* initialize_stack(void (*fn_ptr)(void), int stack_size) {
-    uint32_t* stack_ptr = (uint32_t*)bmalloc(stack_size);
+uint32_t* initialize_stack(void (*fn_ptr)(void), int stackSizeWords) {
+    uint32_t* stack_ptr = (uint32_t*)bmalloc(stackSizeWords * sizeof(uint32_t));
     // TODO: initialize context into stack from fn_ptr
     return stack_ptr;
 }
 
-int add_thread(void (*fn_ptr)(), int stackSize) {
-    uint32_t* stack_ptr = initialize_stack(fn_ptr, stackSize);
+int add_thread(void (*fn_ptr)(), int stackSizeWords) {
+    uint32_t* stack_ptr = initialize_stack(fn_ptr, stackSizeWords);
 
     int tcb_index = 1;
     for (; tcb_index < NUM_THREADS; tcb_index++) {
@@ -30,11 +30,11 @@ int add_thread(void (*fn_ptr)(), int stackSize) {
 }
 
 void yield_thread(void) {
+    SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
     __DSB();
     __ISB();
-    SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
 }
 
 void kill_thread(int pid) {
-
+    // TODO: Implement kill_thread(pid)
 }

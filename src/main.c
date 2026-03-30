@@ -1,12 +1,23 @@
 #include "drivers/uart.h"
-#include "kernel/scheduler.h"
+#include "kernel/kernel.h"
+#include "lib/include/stdio.h"
+
+void some_hi() {
+    while (1) {
+        puts("hi");
+    }
+}
+
+void some_hello() {
+    while (1) {
+        puts("hi");
+    }
+}
 
 int main() {
-    scheduler_init();
+    scheduler_init(5, 20);
     uart_init(115200);
 
-    while (1) {
-        uart_write_string("hello there, get to work\n");
-        for (volatile int i = 0; i < 1000000; i++);
-    }
+    add_thread(some_hi, 20);
+    add_thread(some_hello, 20);
 }
