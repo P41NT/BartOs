@@ -13,13 +13,12 @@ CPU = -mcpu=cortex-m4 -mthumb
 CFLAGS = $(CPU) -O2 -g -Wall -ffreestanding
 
 # linker flags
-LDFLAGS = $(CPU) -T linker/stm32f401.ld -nostdlib
+LDFLAGS = $(CPU) -T linker/stm32f401.ld -nostartfiles
 
 # source files
 SRC = $(shell find src -name "*.c") \
 	lib/system_stm32f4xx.c \
-	startup/mini_startup.s
-	# startup/startup_stm32f401xe.s
+	startup/startup_stm32f401xe.s
 
 # object files
 OBJ = $(addprefix out/, $(SRC:.c=.o))
@@ -30,6 +29,7 @@ all: $(TARGET).bin
 
 # build elf
 $(TARGET).elf: $(OBJ)
+	$(info Objects: $(OBJ))
 	$(CC) $(OBJ) $(LDFLAGS) -o $@
 	$(SIZE) $@
 
@@ -47,7 +47,9 @@ out/%.o: %.s
 
 # flash firmware
 flash: $(TARGET).bin
+	st-flash erase
 	st-flash write $(TARGET).bin 0x08000000
+	st-flash reset
 
 # erase chip
 erase:

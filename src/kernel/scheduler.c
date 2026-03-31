@@ -10,6 +10,13 @@ volatile int current_tid;
 
 volatile int scheduler_started = 0;
 
+volatile uint32_t tick_ms = 0;
+
+void delay(int ms) {
+    uint32_t start = tick_ms;
+    while ((tick_ms - start) < (uint32_t)ms);
+}
+
 void schedule_thread() {
     if (current_tcb->state == THREAD_RUNNING)
         current_tcb->state = THREAD_WAITING;
@@ -49,6 +56,7 @@ __attribute__((naked)) void PendSV_Handler(void) {
 }
 
 void SysTick_Handler(void) {
+    tick_ms++;
     SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
     __DSB();
     __ISB();
