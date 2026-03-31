@@ -4,7 +4,7 @@ OBJCOPY = arm-none-eabi-objcopy
 SIZE    = arm-none-eabi-size
 
 # target
-TARGET = firmware
+TARGET = out/firmware
 
 # cpu
 CPU = -mcpu=cortex-m4 -mthumb

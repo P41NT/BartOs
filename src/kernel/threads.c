@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-void idle_task() {
+void spin_task() {
     while (1) {
         __WFI();
     }
@@ -18,7 +18,7 @@ uint32_t* initialize_stack(void (*fn_ptr)(void), int stackSizeWords) {
 
     *(--sp) = 0x01000000;
     *(--sp) = (uint32_t)fn_ptr; // PC
-    *(--sp) = (uint32_t)idle_task; // LR
+    *(--sp) = (uint32_t)spin_task; // LR
     *(--sp) = 0; // R12
     *(--sp) = 0; // R3
     *(--sp) = 0; // R2
