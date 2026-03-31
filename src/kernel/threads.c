@@ -25,6 +25,15 @@ uint32_t* initialize_stack(void (*fn_ptr)(void), int stackSizeWords) {
     *(--sp) = 0; // R1
     *(--sp) = 0; // R0
 
+    *(--sp) = 0; // R11
+    *(--sp) = 0; // R10
+    *(--sp) = 0; // R9
+    *(--sp) = 0; // R8
+    *(--sp) = 0; // R7
+    *(--sp) = 0; // R6
+    *(--sp) = 0; // R5
+    *(--sp) = 0; // R4
+
     return sp;
 }
 

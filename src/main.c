@@ -27,10 +27,9 @@ void blinky() {
 
     while (1) {
         GPIOA->BSRR = GPIO_BSRR_BS5;   // set PA5
-        delay(100);
-
+        for (volatile int i = 0; i < 100000; i++);
         GPIOA->BSRR = GPIO_BSRR_BR5;   // reset PA5
-        delay(500);
+        for (volatile int i = 0; i < 100000; i++);
     }
 }
 
@@ -40,7 +39,8 @@ int main() {
     SysTick_Config(SystemCoreClock / 1000);
 
     init_allocator();
-    scheduler_init(5, 200);
 
+    scheduler_init(2, 20);
     add_thread(blinky, 40);
+    scheduler_start();
 }
