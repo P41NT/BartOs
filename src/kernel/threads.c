@@ -6,10 +6,26 @@
 
 #include <stdint.h>
 
+void idle_task() {
+    while (1) {
+        __WFI();
+    }
+}
+
 uint32_t* initialize_stack(void (*fn_ptr)(void), int stackSizeWords) {
     uint32_t* stack_ptr = (uint32_t*)bmalloc(stackSizeWords * sizeof(uint32_t));
-    // TODO: initialize context into stack from fn_ptr
-    return stack_ptr;
+    uint32_t* sp = &stack_ptr[stackSizeWords];
+
+    *(--sp) = 0x01000000;
+    *(--sp) = (uint32_t)fn_ptr; // PC
+    *(--sp) = (uint32_t)idle_task; // LR
+    *(--sp) = 0; // R12
+    *(--sp) = 0; // R3
+    *(--sp) = 0; // R2
+    *(--sp) = 0; // R1
+    *(--sp) = 0; // R0
+
+    return sp;
 }
 
 int add_thread(void (*fn_ptr)(), int stackSizeWords) {

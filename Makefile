@@ -16,14 +16,13 @@ CFLAGS = $(CPU) -O2 -g -Wall -ffreestanding
 LDFLAGS = $(CPU) -T linker/stm32f401.ld -nostdlib
 
 # source files
-SRC = \
-src/main.c \
-src/uart.c \
-src/runtime.c \
-startup/startup_stm32f401xe.s
+SRC = $(shell find src -name "*.c") \
+	lib/system_stm32f4xx.c \
+	startup/mini_startup.s
+	# startup/startup_stm32f401xe.s
 
 # object files
-OBJ = $(SRC:.c=.o)
+OBJ = $(addprefix out/, $(SRC:.c=.o))
 OBJ := $(OBJ:.s=.o)
 
 # default target
@@ -39,11 +38,11 @@ $(TARGET).bin: $(TARGET).elf
 	$(OBJCOPY) -O binary $< $@
 
 # compile c files
-%.o: %.c
+out/%.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # compile asm files
-%.o: %.s
+out/%.o: %.s
 	$(CC) $(CPU) -c $< -o $@
 
 # flash firmware

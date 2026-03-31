@@ -91,8 +91,10 @@ alloc_header_t* join(alloc_header_t* curr) {
     return curr;
 }
 
-void* malloc(int size) {
+void* bmalloc(int size) {
     size = size + HEADER_SIZE;
+    size = (size + 7) & ~7; // aligned to 8-words for safety
+
     int order = MIN_ORDER;
     while (BLOCK_SIZE(order) < size) order++;
 
@@ -114,7 +116,7 @@ void* malloc(int size) {
     return allocated;
 }
 
-void free(void* allocated) {
+void bfree(void* allocated) {
     alloc_header_t* curr = (alloc_header_t*)((uint8_t*)allocated - HEADER_SIZE);
     alloc_header_t* next = NULL;
 
