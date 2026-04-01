@@ -47,7 +47,6 @@ out/%.o: %.s
 
 # flash firmware
 flash: $(TARGET).bin
-	st-flash erase
 	st-flash write $(TARGET).bin 0x08000000
 	st-flash reset
 

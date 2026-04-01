@@ -8,7 +8,6 @@
 #include <stdint.h>
 
 void __libc_init_array(void) {
-
 }
 
 void led_setup() {
@@ -27,10 +26,34 @@ void blinky() {
 
     while (1) {
         GPIOA->BSRR = GPIO_BSRR_BS5;   // set PA5
-        for (volatile int i = 0; i < 100000; i++);
+        delay(500);
         GPIOA->BSRR = GPIO_BSRR_BR5;   // reset PA5
-        for (volatile int i = 0; i < 100000; i++);
+        delay(500);
     }
+}
+
+void uarty() {
+    uart_init(115200);
+
+    while (1) {
+        puts("some hi\n");
+        delay(1000);
+    }
+}
+
+void uarty2() {
+    uart_init(115200);
+
+    while (1) {
+        puts("some hello\n");
+        delay(3000);
+    }
+}
+
+void main_thread() {
+    add_thread(blinky, 50);
+    add_thread(uarty, 50);
+    add_thread(uarty2, 50);
 }
 
 int main() {
@@ -40,7 +63,7 @@ int main() {
 
     init_allocator();
 
-    scheduler_init(2, 20);
-    add_thread(blinky, 40);
+    scheduler_init(4, 100);
+    add_thread(main_thread, 50);
     scheduler_start();
 }

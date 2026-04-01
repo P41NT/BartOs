@@ -7,6 +7,7 @@ volatile tcb_t *tcbs;
 volatile tcb_t* current_tcb;
 volatile int current_task_index;
 volatile int current_tid;
+volatile int scheduler_time_slice;
 
 volatile int scheduler_started = 0;
 
@@ -21,11 +22,11 @@ void schedule_thread() {
     if (current_tcb->state == THREAD_RUNNING && current_task_index != IDLE_THREAD)
         current_tcb->state = THREAD_READY;
 
-    for (int offset = 1; offset < NUM_THREADS; offset++) {
+    for (int offset = 1; offset <= NUM_THREADS; offset++) {
         current_task_index = (current_task_index + 1) % NUM_THREADS;
         if (current_task_index == IDLE_THREAD) continue;
-        current_tcb = &tcbs[current_task_index];
 
+        current_tcb = &tcbs[current_task_index];
         if (current_tcb->state == THREAD_READY) {
             current_tcb->state = THREAD_RUNNING;
             return;
@@ -34,7 +35,6 @@ void schedule_thread() {
 
     current_task_index = IDLE_THREAD;
     current_tcb = &tcbs[current_task_index];
-    current_tcb->state = THREAD_RUNNING;
 }
 
 __attribute__((naked)) void PendSV_Handler(void) {
@@ -67,7 +67,7 @@ __attribute__((naked)) void PendSV_Handler(void) {
 void SysTick_Handler(void) {
     tick_ms++;
 
-    if (scheduler_started) {
+    if (scheduler_started && (tick_ms % scheduler_time_slice == 0)) {
         SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
         __DSB();
         __ISB();
@@ -96,8 +96,10 @@ void scheduler_init(int numThreads, int periodMilliseconds) {
     current_tcb = &tcbs[IDLE_THREAD];
     current_task_index = IDLE_THREAD;
 
+    scheduler_time_slice = periodMilliseconds;
+
     NVIC_SetPriority(PendSV_IRQn, 0xFF);
-    SysTick_Config(SystemCoreClock / (1000 / periodMilliseconds));
+    SysTick_Config(SystemCoreClock / 1000);
     NVIC_SetPriority(SysTick_IRQn, 0xFE);
 }
 
@@ -143,7 +145,9 @@ void hard_fault_handler_c(uint32_t *sp) {
     volatile uint32_t pc   = sp[6];
     volatile uint32_t lr   = sp[5];
     volatile uint32_t xpsr = sp[7];
-    (void)pc; (void)lr; (void)xpsr;
+    volatile uint32_t ipsr = xpsr & 0x1FF;
+
+    (void)pc; (void)lr; (void)xpsr; (void)ipsr;
     __asm volatile ("BKPT #0");
     while (1);
 }
