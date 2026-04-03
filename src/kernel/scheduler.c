@@ -2,6 +2,8 @@
 #include "threads.h"
 #include "../lib/include/stdlib.h"
 
+#define NULL 0
+
 volatile int NUM_THREADS;
 volatile tcb_t *tcbs;
 volatile tcb_t* current_tcb;
@@ -89,7 +91,7 @@ void scheduler_init(int numThreads, int periodMilliseconds) {
         tcbs[i].state = THREAD_KILLED;
     }
 
-    tcbs[IDLE_THREAD].psp = initialize_stack(idle_task, 64);
+    tcbs[IDLE_THREAD].psp = initialize_stack(idle_task, 64, NULL);
     tcbs[IDLE_THREAD].state = THREAD_READY;
 
     current_tid = 1;

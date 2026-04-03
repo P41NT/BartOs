@@ -51,6 +51,7 @@ void uart_write_char(char c) {
 void uart_write_string(const char* s) {
     const char *c = s;
     while (*c != '\0') {
+        if (*c == '\n') uart_write_char('\r');
         uart_write_char(*c);
         c++;
     }
