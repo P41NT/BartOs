@@ -3,7 +3,6 @@
 #include "kernel.h"
 
 #include "../lib/include/stdlib.h"
-#include "../lib/include/stdio.h"
 
 #include <stdint.h>
 
@@ -29,7 +28,6 @@ uint32_t* initialize_stack(void (*fn_ptr)(void*), int stackSizeWords, void* argu
     *(--sp) = 0x01000000;
     *(--sp) = (uint32_t)fn_ptr; // PC
     *(--sp) = (uint32_t)thread_end_handler; // LR
-    // *(--sp) = (uint32_t)spin_task; // LR
     *(--sp) = 0; // R12
     *(--sp) = 0; // R3
     *(--sp) = 0; // R2
@@ -56,10 +54,7 @@ int add_thread(void (*fn_ptr)(void*), int stackSizeWords, void* arguments) {
         if (tcbs[tcb_index].state == THREAD_KILLED) break;
     }
 
-    if (tcb_index == NUM_THREADS) {
-        puts("Not enough threads sorry\r\n");
-        return -1;
-    }
+    if (tcb_index == NUM_THREADS) { return -1; }
 
     tcbs[tcb_index].psp = stack_ptr;
     tcbs[tcb_index].state = THREAD_READY;
