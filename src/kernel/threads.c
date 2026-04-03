@@ -74,6 +74,21 @@ void yield_thread(void) {
     __ISB();
 }
 
-void kill_thread(int pid) {
-    // TODO: Implement kill_thread(pid)
+void kill_thread(int tid) {
+    for (int i = 1; i < NUM_THREADS; i++) {
+        if (tcbs[i].tid == tid) {
+            tcbs[i].state = THREAD_KILLED;
+            break;
+        }
+    }
+}
+
+void join_thread(int tid) {
+    for (int i = 1; i < NUM_THREADS; i++) {
+        if (tcbs[i].tid == tid) {
+            while (tcbs[i].tid == tid && tcbs[i].state != THREAD_KILLED) {
+                __WFI();
+            }
+        }
+    }
 }
