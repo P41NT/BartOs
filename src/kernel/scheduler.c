@@ -55,7 +55,7 @@ __attribute__((naked)) void PendSV_Handler(void) {
         "BL schedule_thread\n"
         "POP {LR}\n"
 
-        "LDR R1, =current_tcb\n" // points to current_tcb
+        "LDR R1, =current_tcb\n"
         "LDR R1, [R1]\n"
         "LDR R0, [R1]\n"
         "LDMIA R0!, {R4-R11}\n"

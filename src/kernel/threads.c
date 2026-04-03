@@ -64,7 +64,7 @@ int add_thread(void (*fn_ptr)(void*), int stackSizeWords, void* arguments) {
 }
 
 void yield_thread(void) {
-    SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
+    SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
     __DSB();
     __ISB();
 }
