@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 
-void spin_task() {
+inline void spin_task() {
     while (1) {
         __WFI();
     }
@@ -16,9 +16,8 @@ void thread_end_handler() {
     current_tcb->state = THREAD_KILLED;
     __DSB();
     __ISB();
-    while (1) {
-        __WFI();
-    }
+
+    spin_task();
 }
 
 uint32_t* initialize_stack(void (*fn_ptr)(void*), int stackSizeWords, void* arguments) {

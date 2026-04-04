@@ -23,7 +23,6 @@ void led_setup() {
     GPIOA->PUPDR   &= ~GPIO_PUPDR_PUPDR5;
 }
 
-
 struct uart_arg_t {
     char* message;
     int delay_ms;
@@ -95,4 +94,6 @@ int main() {
     scheduler_init(4, 100);
     add_thread(main_thread, 50, NULL);
     scheduler_start();
+
+    while (1) __WFI();
 }
